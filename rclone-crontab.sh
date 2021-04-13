@@ -40,7 +40,9 @@ mkdir -p $SADIR
 #
 # Running Rclone
 echo
+echo "DEBUG command run: rclone $OPTION sync td-$FOLDER: td-$FOLDER-bck:0/ --backup-dir=td-$FOLDER-bck:$DATETIME/ --drive-service-account-file=$SADIR/$FOLDER.json"
 echo "Running rclone sync:"
+
 rclone $OPTION sync "td-$FOLDER:" "td-$FOLDER-bck:0/" \
         --stats 360m \
         --backup-dir="td-$FOLDER-bck:$DATETIME/" \
