@@ -2,7 +2,7 @@
 set -e
 FOLDER=$1
 #echo $FOLDER
-SCRIPTDIR="/etc/rclone-custom"
+SCRIPTDIR="/etc/rclone-crontab"
 SADIR="$SCRIPTDIR/sa"
 LOGDIR="/var/log/rclone"
 LOGFILE="$LOGDIR/$FOLDER-$DATETIME.log"
