@@ -24,7 +24,6 @@ OPTION="
   --stats=30s \
   --max-backlog=2000000 \
   --ignore-case \
-  --size-only \
   --no-update-modtime \
   --drive-chunk-size=256M \
   --use-mmap \
