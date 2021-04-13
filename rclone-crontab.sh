@@ -1,6 +1,14 @@
 !/bin/bash
 set -e
-FOLDER=$1
+if [ ! $# -eq 1 ]
+then
+	echo
+	cecho "Error: Arguments missing"
+	echo
+	exit 1
+else
+	FOLDER=$1
+fi
 #echo $FOLDER
 SCRIPTDIR="/etc/rclone-crontab"
 SADIR="$SCRIPTDIR/sa"
