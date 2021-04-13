@@ -1,9 +1,9 @@
-!/bin/bash
+#!/bin/bash
 set -e
 if [ ! $# -eq 1 ]
 then
 	echo
-	cecho "Error: Arguments missing"
+	echo "Error: Arguments missing"
 	echo
 	exit 1
 else
