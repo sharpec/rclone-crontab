@@ -13,9 +13,10 @@ fi
 SCRIPTDIR="/etc/rclone-crontab"
 SADIR="$SCRIPTDIR/sa"
 LOGDIR="/var/log/rclone"
-DATETIME="`date +%Y%m%d_%H%M%S`"
+DATETIME="`date +%Y-%m-%d_%H-%M-%S`"
 LOGFILE="$LOGDIR/$FOLDER-$DATETIME.log"
 LOGCHECK="$LOGDIR/check-$FOLDER-$DATETIME.txt"
+LOGDEDUP="$LOGDIR/dedupe-$FOLDER-$DATETIME.txt"
 OPTION="
   --fast-list \
   --transfers=16 \
@@ -38,9 +39,14 @@ OPTION="
 mkdir -p $LOGDIR
 mkdir -p $SADIR
 #
+# Check duplicated file
+rclone dedupe "td-$FOLDER-bck:0/" \
+        --drive-service-account-file="$SADIR/$FOLDER.json" \
+        --dedupe-mode oldest \
+        2>&1 | tee $LOGDEDUP
+#
 # Running Rclone
 echo
-#echo "DEBUG command run: rclone $OPTION sync td-$FOLDER: td-$FOLDER-bck:0/ --backup-dir=td-$FOLDER-bck:$DATETIME/ --drive-service-account-file=$SADIR/$FOLDER.jso$
 echo "Running rclone sync:"
 rclone $OPTION sync "td-$FOLDER:" "td-$FOLDER-bck:0/" \
         --stats 360m \
@@ -48,19 +54,22 @@ rclone $OPTION sync "td-$FOLDER:" "td-$FOLDER-bck:0/" \
         --stats-log-level NOTICE \
         --drive-service-account-file="$SADIR/$FOLDER.json" \
         2>&1 | tee $LOGFILE
-echo
+#
+# Running check and alert
 echo "Running rclone check:"
 rclone check "td-$FOLDER:" "td-$FOLDER-bck:0/" \
         --drive-service-account-file="$SADIR/$FOLDER.json" \
+        --log-level=ERROR \
         2>&1 | tee $LOGCHECK
+        
 if [ -s "$LOGCHECK" ] 
 then
         echo "Backup with error"
         apprise -vv -t ""$FOLDER" error" \
         -b "Backup "$FOLDER" with error" \
+        --attach $LOGDEDUP
+        --attach $LOGFILE
         --attach $LOGCHECK
-        # do something as file has data
 else
-        echo "Backup ok!"
-        # do something as file is empty 
+        echo "Backup Successful"
 fi
