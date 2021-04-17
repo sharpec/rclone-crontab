@@ -1,0 +1,4 @@
+apprise.conf
+*.json
+*.log
+*.txt
