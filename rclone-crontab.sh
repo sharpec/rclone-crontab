@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 set -e
 if [ ! $# -eq 1 ]
 then
