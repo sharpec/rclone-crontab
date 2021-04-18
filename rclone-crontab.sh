@@ -38,17 +38,16 @@ OPTION="
 #   --track-renames \
 mkdir -p $LOGDIR
 mkdir -p $SADIR
+
 echo "Running rclone dedupe:"
-#
-# Chekc duplicated file
 rclone dedupe "td-$FOLDER-bck:0/" \
         --drive-service-account-file="$SADIR/$FOLDER.json" \
         --dedupe-mode oldest \
         2>&1 | tee $LOGDEDUP
+echo "----- log end -----" >> $LOGDEDUP
+
 #read -p "Press any key to resume ..."
-#
-# Running Rclone
-echo
+
 echo "Running rclone sync:"
 rclone $OPTION sync "td-$FOLDER:" "td-$FOLDER-bck:0/" \
         --stats 360m \
@@ -56,11 +55,14 @@ rclone $OPTION sync "td-$FOLDER:" "td-$FOLDER-bck:0/" \
         --stats-log-level NOTICE \
         --drive-service-account-file="$SADIR/$FOLDER.json" \
         2>&1 | tee $LOGFILE
+echo "----- log end -----" >> $LOGFILE
+
 echo "Running rclone check:"
 rclone check "td-$FOLDER:" "td-$FOLDER-bck:0/" \
         --drive-service-account-file="$SADIR/$FOLDER.json" \
         --log-level=ERROR \
         2>&1 | tee $LOGCHECK
+
 echo "Validate backup and notify"
 if [ ! -s $LOGCHECK ]
 then
